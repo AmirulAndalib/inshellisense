@@ -52,7 +52,7 @@ export const action = (program: Command) => async (options: RootCommandOptions) 
   }
 
   const [{ initializeRuntime }, { render }] = await Promise.all([import("../runtime/initialize.js"), import("../ui/ui-root.js")]);
-  await initializeRuntime(shell, options.test ?? false);
+  await initializeRuntime(shell);
   endTiming("startup.beforeRender", startupTiming);
   await render(program, shell, options.test ?? false, options.login ?? false);
 };

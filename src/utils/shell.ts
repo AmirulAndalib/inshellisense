@@ -52,7 +52,7 @@ export const initSupportedShells = supportedShells.filter((shell) => shell != Sh
 export const aliasSupportedShells = [Shell.Bash, Shell.Zsh];
 
 export const userZdotdir = process.env?.ZDOTDIR ?? os.homedir() ?? `~`;
-export const zdotdir = (underTest: boolean) => path.join(os.tmpdir(), underTest ? `is-zsh-${process.pid}` : `is-zsh`);
+export const zdotdir = path.join(os.tmpdir(), `is-zsh-${process.pid}`);
 
 export const checkShellConfigs = (): Shell[] => {
   const shellsWithoutConfigs: Shell[] = [];
@@ -160,13 +160,18 @@ const getShellConfigName = (shell: Shell) => {
   }
 };
 
-export const setupZshDotfiles = async (underTest: boolean) => {
-  const dir = zdotdir(underTest);
-  await fsAsync.mkdir(dir, { recursive: true });
-  await fsAsync.cp(path.join(shellResourcesPath, "shellIntegration-rc.zsh"), path.join(dir, ".zshrc"), { force: true });
-  await fsAsync.cp(path.join(shellResourcesPath, "shellIntegration-profile.zsh"), path.join(dir, ".zprofile"), { force: true });
-  await fsAsync.cp(path.join(shellResourcesPath, "shellIntegration-env.zsh"), path.join(dir, ".zshenv"), { force: true });
-  await fsAsync.cp(path.join(shellResourcesPath, "shellIntegration-login.zsh"), path.join(dir, ".zlogin"), { force: true });
+let zshDotfilesCleanupRegistered = false;
+
+export const setupZshDotfiles = async () => {
+  await fsAsync.mkdir(zdotdir, { recursive: true });
+  if (!zshDotfilesCleanupRegistered) {
+    process.once("exit", () => fs.rmSync(zdotdir, { recursive: true, force: true }));
+    zshDotfilesCleanupRegistered = true;
+  }
+  await fsAsync.cp(path.join(shellResourcesPath, "shellIntegration-rc.zsh"), path.join(zdotdir, ".zshrc"), { force: true });
+  await fsAsync.cp(path.join(shellResourcesPath, "shellIntegration-profile.zsh"), path.join(zdotdir, ".zprofile"), { force: true });
+  await fsAsync.cp(path.join(shellResourcesPath, "shellIntegration-env.zsh"), path.join(zdotdir, ".zshenv"), { force: true });
+  await fsAsync.cp(path.join(shellResourcesPath, "shellIntegration-login.zsh"), path.join(zdotdir, ".zlogin"), { force: true });
 };
 
 const findParentProcess = async () => {

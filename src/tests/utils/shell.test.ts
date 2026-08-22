@@ -1,7 +1,14 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { getShellSourceCommand, hasLegacyShellConfig, Shell, shouldFlagLegacyResourcePlugin } from "../../utils/shell.js";
+import os from "node:os";
+import path from "node:path";
+import process from "node:process";
+import { getShellSourceCommand, hasLegacyShellConfig, Shell, shouldFlagLegacyResourcePlugin, zdotdir } from "../../utils/shell.js";
+
+test("uses a process-specific ZDOTDIR", () => {
+  expect(zdotdir).toBe(path.join(os.tmpdir(), `is-zsh-${process.pid}`));
+});
 
 describe("getShellSourceCommand", () => {
   test.each([
