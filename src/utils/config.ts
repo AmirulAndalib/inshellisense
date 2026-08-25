@@ -19,6 +19,8 @@ type Binding = {
   key: string;
 };
 
+type BoxBorderStyle = "square" | "rounded";
+
 type Config = {
   bindings: {
     nextSuggestion: Binding;
@@ -33,6 +35,7 @@ type Config = {
   useNerdFont: boolean;
   maxSuggestions?: number;
   activeSuggestionBackgroundColor: string;
+  boxBorderStyle: BoxBorderStyle;
 };
 
 const bindingSchema: JSONSchemaType<Binding> = {
@@ -94,6 +97,12 @@ const configSchema = {
       pattern: "^#[0-9A-Fa-f]{6}$",
       default: "#7D56F4",
     },
+    boxBorderStyle: {
+      type: "string",
+      nullable: true,
+      enum: ["square", "rounded"],
+      default: "square",
+    },
   },
   additionalProperties: false,
 };
@@ -116,6 +125,7 @@ let globalConfig: Config = {
   useAliases: false,
   useNerdFont: false,
   activeSuggestionBackgroundColor: "#7D56F4",
+  boxBorderStyle: "square",
 };
 
 export const getConfig = (): Config => globalConfig;
@@ -147,6 +157,7 @@ export const loadConfig = async (program: Command) => {
         useNerdFont: config?.useNerdFont ?? false,
         maxSuggestions: config?.maxSuggestions ?? 5,
         activeSuggestionBackgroundColor: config?.activeSuggestionBackgroundColor ?? "#7D56F4",
+        boxBorderStyle: config?.boxBorderStyle ?? "square",
       };
     }
   }

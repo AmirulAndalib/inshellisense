@@ -157,6 +157,14 @@ You can customize the active suggestion's background with a `#RRGGBB` hex color.
 activeSuggestionBackgroundColor = "#2E7D32"
 ```
 
+### Box Border Style
+
+You can use square (the default) or rounded corners for suggestion and description boxes.
+
+```toml
+boxBorderStyle = "rounded"
+```
+
 ## Unsupported Specs
 
 Specs for the `az`, `gcloud`, & `aws` CLIs are not supported in inshellisense due to their large size.

@@ -5,15 +5,22 @@ import { resetColor } from "../utils/ansi.js";
 import wrapAnsi from "wrap-ansi";
 import chalk from "chalk";
 import { wcswidth } from "../utils/unicode.js";
+import { getConfig } from "../utils/config.js";
+
+const borderCorners = {
+  square: ["┌", "┐", "└", "┘"],
+  rounded: ["╭", "╮", "╰", "╯"],
+} as const;
 
 export const renderBox = (rows: string[], width: number, borderColor?: string): string[] => {
   const result = [];
   const setColor = (text: string) => resetColor + (borderColor ? chalk.hex(borderColor).apply(text) : text);
-  result.push(setColor("┌" + "─".repeat(width - 2) + "┐"));
+  const [topLeft, topRight, bottomLeft, bottomRight] = borderCorners[getConfig().boxBorderStyle];
+  result.push(setColor(topLeft + "─".repeat(width - 2) + topRight));
   rows.forEach((row) => {
     result.push(setColor("│") + row + setColor("│"));
   });
-  result.push(setColor("└" + "─".repeat(width - 2) + "┘"));
+  result.push(setColor(bottomLeft + "─".repeat(width - 2) + bottomRight));
   return result;
 };
 
